@@ -5,6 +5,16 @@ var queryUrl = baseUrl + '/query';
 var username = "ois.seminar";
 var password = "ois4fri";
 
+var ehrIDD;
+
+//AJAX applications are browser- and platform-independent!
+
+//GET or POST? (== type of request)
+//Sending a large amount of data to the server (POST has no size limitations)
+//Sending user input (which can contain unknown characters), POST is more robust and secure than GET
+//ajax .open(<type>, <url>, <true=async>)
+
+//function getSessionId(): is used to obtain a session (ehr session) used for authentication
 function getSessionId() {
     var response = $.ajax({
         type: "POST",
@@ -15,10 +25,12 @@ function getSessionId() {
     return response.responseJSON.sessionId;
 }
 
-
+//variable ehrId: holds our sample patient’s ehrId.
+//ustvarim bolnika
 function kreirajEHRzaBolnika() {
 	sessionId = getSessionId();
 
+	//pobere podatke iz inputov
 	var ime = $("#kreirajIme").val();
 	var priimek = $("#kreirajPriimek").val();
 	var datumRojstva = $("#kreirajDatumRojstva").val();
@@ -26,30 +38,55 @@ function kreirajEHRzaBolnika() {
 	if (!ime || !priimek || !datumRojstva || ime.trim().length == 0 || priimek.trim().length == 0 || datumRojstva.trim().length == 0) {
 		$("#kreirajSporocilo").html("<span class='obvestilo label label-warning fade-in'>Prosim vnesite zahtevane podatke!</span>");
 	} else {
+		//add a default header to every request
+		//An object of additional header key/value pairs to send along with requests using the XMLHttpRequest transport.
 		$.ajaxSetup({
 		    headers: {"Ehr-Session": sessionId}
 		});
+		//POST /ehr: creates a new EHR
 		$.ajax({
+			//Specifies the URL to send the request to.
 		    url: baseUrl + "/ehr",
+		    //Specifies the type of request. (GET or POST)
 		    type: 'POST',
+		    //A function to be run when the request succeeds
+		    //data - contains the resulting data from the request
 		    success: function (data) {
-		        var ehrId = data.ehrId;
+		        //var ehrId = data.ehrId;
+		        ehrIDD = data.ehrId;
+		        //GET /demographics/ehr/{ehrId}/party: retrieves patient’s demographic data
+		        // build party data
 		        var partyData = {
 		            firstNames: ime,
 		            lastNames: priimek,
 		            dateOfBirth: datumRojstva,
-		            partyAdditionalInfo: [{key: "ehrId", value: ehrId}]
+		            //partyAdditionalInfo: [{key: "ehrId", value: ehrId}]
+		            partyAdditionalInfo: [{key: "ehrId", value: ehrIDD}]
 		        };
+		        //POST /demographics/party: creates a new party in the demographics server and stores an ehrId
 		        $.ajax({
 		            url: baseUrl + "/demographics/party",
 		            type: 'POST',
+		            //The content type used when sending data to the server.
 		            contentType: 'application/json',
+		            //Specifies data to be sent to the server
 		            data: JSON.stringify(partyData),
 		            success: function (party) {
 		                if (party.action == 'CREATE') {
-		                    $("#kreirajSporocilo").html("<span class='obvestilo label label-success fade-in'>Uspešno kreiran EHR '" + ehrId + "'.</span>");
-		                    console.log("Uspešno kreiran EHR '" + ehrId + "'.");
-		                    $("#preberiEHRid").val(ehrId);
+		                	//$("#result").html("Created: " + party.meta.href); //Created: https://rest.ehrscape.com/rest/v1/demographics/party/104
+		                    //$("#kreirajSporocilo").html("<span class='obvestilo label label-success fade-in'>Uspešno kreiran EHR '" + ehrId + "'.</span>");
+		                    //console.log("Uspešno kreiran EHR '" + ehrId + "'.");
+		                    //$("#preberiEHRid").val(ehrId);
+		                    $("#kreirajSporocilo").html("<span class='obvestilo label label-success fade-in'>Uspešno kreiran EHR '" + ehrIDD + "'.</span>");
+		                    console.log("Uspešno kreiran EHR '" + ehrIDD + "'.");
+		                    $("#preberiEHRid").val(ehrIDD);
+		                    $("#dodajVitalnoEHR").val(ehrIDD);
+		                    $("#meritveVitalnihZnakovEHRid").val(ehrIDD);
+		                    
+		                    //ustvarim novega uporabnika v listi uporabnikov
+		                    //<option value="254f791d-2e7c-49d9-b646-376f62d6ead5">Dejan Lavbič</option>
+		                    var noviVnos = '<option value="' + ehrIDD +'">' + ime + ' ' + priimek +'</option>';
+		                    $(noviVnos).appendTo("#preberiObstojeciEHR");
 		                }
 		            },
 		            error: function(err) {
@@ -62,17 +99,19 @@ function kreirajEHRzaBolnika() {
 	}
 }
 
-
+//vneses ehr, najde podatke o bolniku
 function preberiEHRodBolnika() {
 	sessionId = getSessionId();
 
 	var ehrId = $("#preberiEHRid").val();
+	ehrIDD = ehrId;
 
 	if (!ehrId || ehrId.trim().length == 0) {
 		$("#preberiSporocilo").html("<span class='obvestilo label label-warning fade-in'>Prosim vnesite zahtevan podatek!");
 	} else {
 		$.ajax({
 			url: baseUrl + "/demographics/ehr/" + ehrId + "/party",
+			//url: baseUrl + "/demographics/ehr/" + ehrIDD + "/party",
 			type: 'GET',
 			headers: {"Ehr-Session": sessionId},
 	    	success: function (data) {
@@ -88,19 +127,14 @@ function preberiEHRodBolnika() {
 	}	
 }
 
-
 function dodajMeritveVitalnihZnakov() {
 	sessionId = getSessionId();
 
-	var ehrId = $("#dodajVitalnoEHR").val();
+	//var ehrId = $("#dodajVitalnoEHR").val();
+	var ehrId = ehrIDD;
 	var datumInUra = $("#dodajVitalnoDatumInUra").val();
-	var telesnaVisina = $("#dodajVitalnoTelesnaVisina").val();
-	var telesnaTeza = $("#dodajVitalnoTelesnaTeza").val();
 	var telesnaTemperatura = $("#dodajVitalnoTelesnaTemperatura").val();
-	var sistolicniKrvniTlak = $("#dodajVitalnoKrvniTlakSistolicni").val();
-	var diastolicniKrvniTlak = $("#dodajVitalnoKrvniTlakDiastolicni").val();
 	var nasicenostKrviSKisikom = $("#dodajVitalnoNasicenostKrviSKisikom").val();
-	var merilec = $("#dodajVitalnoMerilec").val();
 
 	if (!ehrId || ehrId.trim().length == 0) {
 		$("#dodajMeritveVitalnihZnakovSporocilo").html("<span class='obvestilo label label-warning fade-in'>Prosim vnesite zahtevane podatke!</span>");
@@ -113,19 +147,14 @@ function dodajMeritveVitalnihZnakov() {
 		    "ctx/language": "en",
 		    "ctx/territory": "SI",
 		    "ctx/time": datumInUra,
-		    "vital_signs/height_length/any_event/body_height_length": telesnaVisina,
-		    "vital_signs/body_weight/any_event/body_weight": telesnaTeza,
 		   	"vital_signs/body_temperature/any_event/temperature|magnitude": telesnaTemperatura,
 		    "vital_signs/body_temperature/any_event/temperature|unit": "°C",
-		    "vital_signs/blood_pressure/any_event/systolic": sistolicniKrvniTlak,
-		    "vital_signs/blood_pressure/any_event/diastolic": diastolicniKrvniTlak,
 		    "vital_signs/indirect_oximetry:0/spo2|numerator": nasicenostKrviSKisikom
 		};
 		var parametriZahteve = {
 		    "ehrId": ehrId,
 		    templateId: 'Vital Signs',
 		    format: 'FLAT',
-		    committer: merilec
 		};
 		$.ajax({
 		    url: baseUrl + "/composition?" + $.param(parametriZahteve),
@@ -149,6 +178,7 @@ function preberiMeritveVitalnihZnakov() {
 	sessionId = getSessionId();	
 
 	var ehrId = $("#meritveVitalnihZnakovEHRid").val();
+	//var ehrId = ehrIDD;
 	var tip = $("#preberiTipZaVitalneZnake").val();
 
 	if (!ehrId || ehrId.trim().length == 0 || !tip || tip.trim().length == 0) {
@@ -183,7 +213,6 @@ function preberiMeritveVitalnihZnakov() {
 							console.log(JSON.parse(err.responseText).userMessage);
 					    }
 					});
-				} else if (tip == "telesna teža") {
 					$.ajax({
 					    url: baseUrl + "/view/" + ehrId + "/" + "weight",
 					    type: 'GET',
@@ -249,31 +278,30 @@ function preberiMeritveVitalnihZnakov() {
 	}
 }
 
-
+//te stvari so narejeno fiksno, iz dropdown menija
+//ko izberem nekaj v meniju, se nastimajo vrednosti polj.
 $(document).ready(function() {
-	$('#preberiObstojeciEHR').change(function() {
-		$("#preberiSporocilo").html("");
-		$("#preberiEHRid").val($(this).val());
-	});
 	$('#preberiPredlogoBolnika').change(function() {
 		$("#kreirajSporocilo").html("");
+		//naredim ?tabelo, kjer locim po vejicah
 		var podatki = $(this).val().split(",");
 		$("#kreirajIme").val(podatki[0]);
 		$("#kreirajPriimek").val(podatki[1]);
 		$("#kreirajDatumRojstva").val(podatki[2]);
+	});
+	$('#preberiObstojeciEHR').change(function() {
+		$("#preberiSporocilo").html("");
+		$("#preberiEHRid").val($(this).val());
+		$("#dodajVitalnoEHR").val($(this).val());
+		$("#meritveVitalnihZnakovEHRid").val($(this).val());
 	});
 	$('#preberiObstojeciVitalniZnak').change(function() {
 		$("#dodajMeritveVitalnihZnakovSporocilo").html("");
 		var podatki = $(this).val().split("|");
 		$("#dodajVitalnoEHR").val(podatki[0]);
 		$("#dodajVitalnoDatumInUra").val(podatki[1]);
-		$("#dodajVitalnoTelesnaVisina").val(podatki[2]);
-		$("#dodajVitalnoTelesnaTeza").val(podatki[3]);
 		$("#dodajVitalnoTelesnaTemperatura").val(podatki[4]);
-		$("#dodajVitalnoKrvniTlakSistolicni").val(podatki[5]);
-		$("#dodajVitalnoKrvniTlakDiastolicni").val(podatki[6]);
 		$("#dodajVitalnoNasicenostKrviSKisikom").val(podatki[7]);
-		$("#dodajVitalnoMerilec").val(podatki[8]);
 	});
 	$('#preberiEhrIdZaVitalneZnake').change(function() {
 		$("#preberiMeritveVitalnihZnakovSporocilo").html("");
