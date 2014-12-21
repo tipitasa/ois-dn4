@@ -189,7 +189,7 @@ function dodajMeritveVitalnihZnakov() {
 		    "ctx/territory": "SI",
 		    "ctx/time": datumInUra,
 		   	"vital_signs/body_temperature/any_event/temperature|magnitude": telesnaTemperatura,
-		    "vital_signs/body_temperature/any_event/temperature|unit": " °C",
+		    "vital_signs/body_temperature/any_event/temperature|unit": "°C",
 		    "vital_signs/indirect_oximetry:0/spo2|numerator": nasicenostKrviSKisikom
 		};
 		var parametriZahteve = {
