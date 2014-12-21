@@ -405,7 +405,7 @@ function preberiMeritveVitalnihZnakov() {
 						"contains OBSERVATION b_a[openEHR-EHR-OBSERVATION.indirect_oximetry.v1] " +
 						"where a/name/value='Vital Signs' " +
 						"order by b_a/data[at0001]/origin/value desc " +
-						"limit 20";
+						"limit 15";
 						
 					$.ajax({
 						url: baseUrl + "/query?" + $.param({"aql": AQL}),
