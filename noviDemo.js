@@ -91,8 +91,8 @@ function kreirajEHRzaBolnika() {
 		                    //$("#kreirajSporocilo").html("<span class='obvestilo label label-success fade-in'>UspeÅ¡no kreiran EHR '" + ehrId + "'.</span>");
 		                    //console.log("UspeÅ¡no kreiran EHR '" + ehrId + "'.");
 		                    //$("#preberiEHRid").val(ehrId);
-		                    $("#kreirajSporocilo").html("<span class='obvestilo label label-success fade-in'>UspeÅ¡no kreiran EHR '" + globalEhrID + "'.</span>");
-		                    console.log("UspeÅ¡no kreiran EHR '" + globalEhrID + "'.");
+		                    $("#kreirajSporocilo").html("<span class='obvestilo label label-success fade-in'>Uspešno kreiran EHR '" + globalEhrID + "'.</span>");
+		                    console.log("Uspešno kreiran EHR '" + globalEhrID + "'.");
 		                    $("#preberiEHRid").val(globalEhrID);
 		                    $("#dodajVitalnoEHR").val(globalEhrID);
 		                    $("#meritveVitalnihZnakovEHRid").val(globalEhrID);
@@ -189,7 +189,7 @@ function dodajMeritveVitalnihZnakov() {
 		    "ctx/territory": "SI",
 		    "ctx/time": datumInUra,
 		   	"vital_signs/body_temperature/any_event/temperature|magnitude": telesnaTemperatura,
-		    "vital_signs/body_temperature/any_event/temperature|unit": "Â°C",
+		    "vital_signs/body_temperature/any_event/temperature|unit": " °C",
 		    "vital_signs/indirect_oximetry:0/spo2|numerator": nasicenostKrviSKisikom
 		};
 		var parametriZahteve = {
@@ -206,10 +206,10 @@ function dodajMeritveVitalnihZnakov() {
 		    	console.log(res.meta.href);
 		        $("#dodajMeritveVitalnihZnakovSporocilo").html("<span class='obvestilo label label-success fade-in'>" + res.meta.href + ".</span>");
 		    },
-		    error: function(err) {
-		    	$("#dodajMeritveVitalnihZnakovSporocilo").html("<span class='obvestilo label label-danger fade-in'>Napaka '" + JSON.parse(err.responseText).userMessage + "'!");
-				console.log(JSON.parse(err.responseText).userMessage);
-		    }
+		    //error: function(err) {
+		    //	$("#dodajMeritveVitalnihZnakovSporocilo").html("<span class='obvestilo label label-danger fade-in'>Napaka '" + JSON.parse(err.responseText).userMessage + "'!");
+			//	console.log(JSON.parse(err.responseText).userMessage);
+		    //}
 		});
 	}
 }
@@ -224,17 +224,17 @@ function preveriKisik() {
 		//meje: <94 | [94,96) | [96,100]
 		if (globalSp02 < 94) {
 			$(".progress-bar").addClass("progress-bar-danger");
-			$("#kisikSporocilo").html("<span class='obvestilo label label-danger fade-in'>Nivo kisika v vaÅ¡i krvi je nevarno prenizek!</span>");
-			$("#kisikRazlaga").text("Normalen odstotek kisika v krvi na tej nadmorski viÅ¡ini je 96-100%.");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-danger fade-in'>Nivo kisika v vaši krvi je nevarno prenizek!</span>");
+			$("#kisikRazlaga").text("Normalen odstotek kisika v krvi na tej nadmorski višini je 96-100%.");
 		}
 		else if (globalSp02 < 96) {
 			$(".progress-bar").addClass("progress-bar-warning");
-			$("#kisikSporocilo").html("<span class='obvestilo label label-warning fade-in'>Nivo kisika v vaÅ¡i krvi je prenizek!</span>");
-			$("#kisikRazlaga").text("Normalen odstotek kisika v krvi na tej nadmorski viÅ¡ini je 96-100%. PriporoÄljivo je, da si kisik izmerite Å¡e na kakem drugem delu telesa. MogoÄ razlog je akutna bolezen (prehlad, pljuÄnica). ÄŒe se meritve dalj Äasa ne spremenijo, kontaktirajte zdravnika.");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-warning fade-in'>Nivo kisika v vaši krvi je prenizek!</span>");
+			$("#kisikRazlaga").text("Normalen odstotek kisika v krvi na tej nadmorski višini je 96-100%. Priporočljivo je, da si kisik izmerite še na kakem drugem delu telesa. Mogoč razlog je akutna bolezen (prehlad, pljučnica). Če se meritve dalj časa ne spremenijo, kontaktirajte zdravnika.");
 		}
 		else {
 			$(".progress-bar").addClass("progress-bar-success");
-			$("#kisikSporocilo").html("<span class='obvestilo label label-success fade-in'>Nivo kisika v vaÅ¡i krvi se nahaja v normalnih mejah.</span>");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-success fade-in'>Nivo kisika v vaši krvi se nahaja v normalnih mejah.</span>");
 			$("#kisikRazlaga").text("");
 		}
 	}
@@ -242,69 +242,69 @@ function preveriKisik() {
 		//meje: <87 | [87, 90) | [90,95] | (95, 100]
 		if (globalSp02 < 87) {
 			$(".progress-bar").addClass("progress-bar-danger");
-			$("#kisikSporocilo").html("<span class='obvestilo label label-danger fade-in'>Nivo kisika v vaÅ¡i krvi je nevarno prenizek!</span>");
-			$("#kisikRazlaga").text("Å½eljen odstotek kisika v krvi na tej nadmorski viÅ¡ini je 90-95%.");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-danger fade-in'>Nivo kisika v vaši krvi je nevarno prenizek!</span>");
+			$("#kisikRazlaga").text("Željen odstotek kisika v krvi na tej nadmorski višini je 90-95%.");
 		}
 		else if (globalSp02 < 90) {
 			$(".progress-bar").addClass("progress-bar-warning");
-			$("#kisikSporocilo").html("<span class='obvestilo label label-warning fade-in'>Nivo kisika v vaÅ¡i krvi je prenizek!</span>");
-			$("#kisikRazlaga").text("Å½eljen odstotek kisika v krvi na tej nadmorski viÅ¡ini je 90-95%. PriporoÄljivo je, da si kisik izmerite Å¡e na kakem drugem delu telesa. MogoÄ razlog je akutna bolezen (prehlad, pljuÄnica). ÄŒe se meritve dalj Äasa ne spremenijo, kontaktirajte zdravnika.");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-warning fade-in'>Nivo kisika v vaši krvi je prenizek!</span>");
+			$("#kisikRazlaga").text("Željen odstotek kisika v krvi na tej nadmorski višini je 90-95%. Priporočljivo je, da si kisik izmerite še na kakem drugem delu telesa. Mogoč razlog je akutna bolezen (prehlad, pljučnica). Če se meritve dalj časa ne spremenijo, kontaktirajte zdravnika.");
 		}
 		else if (globalSp02 <= 95) {
 			$(".progress-bar").addClass("progress-bar-success");
-			$("#kisikSporocilo").html("<span class='obvestilo label label-success fade-in'>Nivo kisika v vaÅ¡i krvi se nahaja v normalnih mejah.</span>");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-success fade-in'>Nivo kisika v vaši krvi se nahaja v normalnih mejah.</span>");
 			$("#kisikRazlaga").text("Lahko nadaljujete z IHT viÅ¡inskim treningom.");
 		}
 		else {
 			$(".progress-bar").addClass("progress-bar-info");
-			$("#kisikSporocilo").html("<span class='obvestilo label label-info fade-in'>Nivo kisika v vaÅ¡i krvi je previsok.</span>");
-			$("#kisikRazlaga").text("Ostanite na isti nadmorski viÅ¡ini. Da lahko nadaljujete z IHT viÅ¡inskim treningom in se pomaknete na viÅ¡jo nadmorsko viÅ¡ino, mora biti raven kisika v vaÅ¡i krvi 90-95%");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-info fade-in'>Nivo kisika v vaši krvi je previsok.</span>");
+			$("#kisikRazlaga").text("Ostanite na isti nadmorski višini. Da lahko nadaljujete z IHT višinskim treningom in se pomaknete na višjo nadmorsko višino, mora biti raven kisika v vaši krvi 90-95%");
 		}
 	}
 	else if (globalCurrElevation == "over3000") {
 		//meje: <82 | [82, 85) | [85,90] | (90, 100]
 		if (globalSp02 < 82) {
 			$(".progress-bar").addClass("progress-bar-danger");
-			$("#kisikSporocilo").html("<span class='obvestilo label label-danger fade-in'>Nivo kisika v vaÅ¡i krvi je nevarno prenizek!</span>");
-			$("#kisikRazlaga").text("Å½eljen odstotek kisika v krvi na tej nadmorski viÅ¡ini je 85-90%.");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-danger fade-in'>Nivo kisika v vaši krvi je nevarno prenizek!</span>");
+			$("#kisikRazlaga").text("Željen odstotek kisika v krvi na tej nadmorski višini je 85-90%.");
 		}
 		else if (globalSp02 < 85) {
 			$(".progress-bar").addClass("progress-bar-warning");
-			$("#kisikSporocilo").html("<span class='obvestilo label label-warning fade-in'>Nivo kisika v vaÅ¡i krvi je prenizek!</span>");
-			$("#kisikRazlaga").text("Å½eljen odstotek kisika v krvi na tej nadmorski viÅ¡ini je 85-90%. PriporoÄljivo je, da si kisik izmerite Å¡e na kakem drugem delu telesa. MogoÄ razlog je akutna bolezen (prehlad, pljuÄnica). ÄŒe se meritve dalj Äasa ne spremenijo, kontaktirajte zdravnika.");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-warning fade-in'>Nivo kisika v vaši krvi je prenizek!</span>");
+			$("#kisikRazlaga").text("Željen odstotek kisika v krvi na tej nadmorski višini je 85-90%. Priporočljivo je, da si kisik izmerite še na kakem drugem delu telesa. Mogoč razlog je akutna bolezen (prehlad, pljučnica). Če se meritve dalj časa ne spremenijo, kontaktirajte zdravnika.");
 		}
 		else if (globalSp02 <= 90) {
 			$(".progress-bar").addClass("progress-bar-success");
-			$("#kisikSporocilo").html("<span class='obvestilo label label-success fade-in'>Nivo kisika v vaÅ¡i krvi se nahaja v normalnih mejah.</span>");
-			$("#kisikRazlaga").text("Lahko nadaljujete z IHT viÅ¡inskim treningom.");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-success fade-in'>Nivo kisika v vaši krvi se nahaja v normalnih mejah.</span>");
+			$("#kisikRazlaga").text("Lahko nadaljujete z IHT višinskim treningom.");
 		}
 		else {
 			$(".progress-bar").addClass("progress-bar-info");
-			$("#kisikSporocilo").html("<span class='obvestilo label label-info fade-in'>Nivo kisika v vaÅ¡i krvi je previsok.</span>");
-			$("#kisikRazlaga").text("Ostanite na isti nadmorski viÅ¡ini. Da lahko nadaljujete z IHT viÅ¡inskim treningom in se pomaknete na viÅ¡jo nadmorsko viÅ¡ino, mora biti raven kisika v vaÅ¡i krvi 85-90%");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-info fade-in'>Nivo kisika v vaši krvi je previsok.</span>");
+			$("#kisikRazlaga").text("Ostanite na isti nadmorski višini. Da lahko nadaljujete z IHT višinskim treningom in se pomaknete na višjo nadmorsko višino, mora biti raven kisika v vaši krvi 85-90%");
 		}
 	}
 	else { //cez 6000
 		//meje: <77 | [77, 80) | [80,85] | (85, 100]
 		if (globalSp02 < 77) {
 			$(".progress-bar").addClass("progress-bar-danger");
-			$("#kisikSporocilo").html("<span class='obvestilo label label-danger fade-in'>Nivo kisika v vaÅ¡i krvi je nevarno prenizek!</span>");
-			$("#kisikRazlaga").text("Å½eljen odstotek kisika v krvi na tej nadmorski viÅ¡ini je 80-85%.");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-danger fade-in'>Nivo kisika v vaši krvi je nevarno prenizek!</span>");
+			$("#kisikRazlaga").text("Željen odstotek kisika v krvi na tej nadmorski višini je 80-85%.");
 		}
 		else if (globalSp02 < 80) {
 			$(".progress-bar").addClass("progress-bar-warning");
-			$("#kisikSporocilo").html("<span class='obvestilo label label-warning fade-in'>Nivo kisika v vaÅ¡i krvi je prenizek!</span>");
-			$("#kisikRazlaga").text("Å½eljen odstotek kisika v krvi na tej nadmorski viÅ¡ini je 80-85%. PriporoÄljivo je, da si kisik izmerite Å¡e na kakem drugem delu telesa. MogoÄ razlog je akutna bolezen (prehlad, pljuÄnica). ÄŒe se meritve dalj Äasa ne spremenijo, kontaktirajte zdravnika.");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-warning fade-in'>Nivo kisika v vaši krvi je prenizek!</span>");
+			$("#kisikRazlaga").text("Željen odstotek kisika v krvi na tej nadmorski višini je 80-85%. Priporočljivo je, da si kisik izmerite še na kakem drugem delu telesa. Mogoč razlog je akutna bolezen (prehlad, pljučnica). Če se meritve dalj časa ne spremenijo, kontaktirajte zdravnika.");
 		}
 		else if (globalSp02 <= 85) {
 			$(".progress-bar").addClass("progress-bar-success");
-			$("#kisikSporocilo").html("<span class='obvestilo label label-success fade-in'>Nivo kisika v vaÅ¡i krvi se nahaja v normalnih mejah.</span>");
-			$("#kisikRazlaga").text("Lahko nadaljujete z IHT viÅ¡inskim treningom.");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-success fade-in'>Nivo kisika v vaši krvi se nahaja v normalnih mejah.</span>");
+			$("#kisikRazlaga").text("Lahko nadaljujete z IHT višinskim treningom.");
 		}
 		else {
 			$(".progress-bar").addClass("progress-bar-info");
-			$("#kisikSporocilo").html("<span class='obvestilo label label-info fade-in'>Nivo kisika v vaÅ¡i krvi je previsok.</span>");
-			$("#kisikRazlaga").text("Ostanite na isti nadmorski viÅ¡ini. Da lahko nadaljujete z IHT viÅ¡inskim treningom in se pomaknete na viÅ¡jo nadmorsko viÅ¡ino, mora biti raven kisika v vaÅ¡i krvi 80-85%");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-info fade-in'>Nivo kisika v vaši krvi je previsok.</span>");
+			$("#kisikRazlaga").text("Ostanite na isti nadmorski višini. Da lahko nadaljujete z IHT višinskim treningom in se pomaknete na višjo nadmorsko višino, mora biti raven kisika v vaši krvi 80-85%");
 		}
 	}
 }
@@ -373,7 +373,7 @@ function preberiMeritveVitalnihZnakov() {
 								var s = graf.addSeries(null, dimple.plot.area);
 								graf.draw();
 								
-								var results = "<table class='table table-striped table-hover'><tr><th>Datum in ura</th><th class='text-right'>NasiÄenost krvi</th></tr>";
+								var results = "<table class='table table-striped table-hover'><tr><th>Datum in ura</th><th class='text-right'>Nasičenost krvi</th></tr>";
 								for (var i in res) {
 									results += "<tr><td>" + res[i].time + "</td><td class='text-right'>" + res[i].spO2 + "% " + "</td>";
 									//results += "<tr><td>" + res[i].time + "</td><td class='text-right'>" + "% " + "</td>";
@@ -475,7 +475,6 @@ $(document).ready(function() {
 		$("#meritveVitalnihZnakovEHRid").val($(this).val());
 	});
 	$('#preberiObstojeciVitalniZnak').change(function() {
-		$("#dodajMeritveVitalnihZnakovSporocilo").html("");
 		var podatki = $(this).val().split("|");
 		$("#dodajVitalnoEHR").val(podatki[0]);
 		$("#dodajVitalnoDatumInUra").val(podatki[1]);
