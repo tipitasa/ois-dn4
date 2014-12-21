@@ -230,7 +230,7 @@ function preveriKisik() {
 		else if (globalSp02 < 96) {
 			$(".progress-bar").addClass("progress-bar-warning");
 			$("#kisikSporocilo").html("<span class='obvestilo label label-warning fade-in'>Nivo kisika v vaši krvi je prenizek!</span>");
-			$("#kisikRazlaga").text("Normalen odstotek kisika v krvi na tej nadmorski višini je 96-100%. Priporočljivo je, da si kisik izmerite še na kakem drugem delu telesa. Mogoč razlog je akutna bolezen (prehlad, pljučnica). Če se meritve dalj časa ne spremenijo, kontaktirajte zdravnika.");
+			$("#kisikRazlaga").text("Normalen odstotek kisika v krvi na tej nadmorski višini je 96-100%. Priporočljivo je, da si kisik izmerite še na kakem drugem delu telesa. Poizkusite tudi to: One technique for raising your blood oxygen level at altitude is something called 'pressure breathing'. The idea is to artificially raise the pressure of the air in your lungs by pursing your lips to slow the air escaping while exhaling HARD for about 1 minute. It's very counter-intuitive, but it works great.");
 		}
 		else {
 			$(".progress-bar").addClass("progress-bar-success");
@@ -248,7 +248,7 @@ function preveriKisik() {
 		else if (globalSp02 < 90) {
 			$(".progress-bar").addClass("progress-bar-warning");
 			$("#kisikSporocilo").html("<span class='obvestilo label label-warning fade-in'>Nivo kisika v vaši krvi je prenizek!</span>");
-			$("#kisikRazlaga").text("Željen odstotek kisika v krvi na tej nadmorski višini je 90-95%. Priporočljivo je, da si kisik izmerite še na kakem drugem delu telesa. Mogoč razlog je akutna bolezen (prehlad, pljučnica). Če se meritve dalj časa ne spremenijo, kontaktirajte zdravnika.");
+			$("#kisikRazlaga").text("Željen odstotek kisika v krvi na tej nadmorski višini je 90-95%. Priporočljivo je, da si kisik izmerite še na kakem drugem delu telesa. Mogoč razlog je akutna bolezen (prehlad, pljučnica). Če se meritve dalj časa ne spremenijo, kontaktirajte zdravnika. Poizkusite tudi to: One technique for raising your blood oxygen level at altitude is something called 'pressure breathing'. The idea is to artificially raise the pressure of the air in your lungs by pursing your lips to slow the air escaping while exhaling HARD for about 1 minute. It's very counter-intuitive, but it works great.");
 		}
 		else if (globalSp02 <= 95) {
 			$(".progress-bar").addClass("progress-bar-success");
@@ -271,7 +271,7 @@ function preveriKisik() {
 		else if (globalSp02 < 85) {
 			$(".progress-bar").addClass("progress-bar-warning");
 			$("#kisikSporocilo").html("<span class='obvestilo label label-warning fade-in'>Nivo kisika v vaši krvi je prenizek!</span>");
-			$("#kisikRazlaga").text("Željen odstotek kisika v krvi na tej nadmorski višini je 85-90%. Priporočljivo je, da si kisik izmerite še na kakem drugem delu telesa. Mogoč razlog je akutna bolezen (prehlad, pljučnica). Če se meritve dalj časa ne spremenijo, kontaktirajte zdravnika.");
+			$("#kisikRazlaga").text("Željen odstotek kisika v krvi na tej nadmorski višini je 85-90%. Priporočljivo je, da si kisik izmerite še na kakem drugem delu telesa. Mogoč razlog je akutna bolezen (prehlad, pljučnica). Če se meritve dalj časa ne spremenijo, kontaktirajte zdravnika. Poizkusite tudi to: One technique for raising your blood oxygen level at altitude is something called 'pressure breathing'. The idea is to artificially raise the pressure of the air in your lungs by pursing your lips to slow the air escaping while exhaling HARD for about 1 minute. It's very counter-intuitive, but it works great.");
 		}
 		else if (globalSp02 <= 90) {
 			$(".progress-bar").addClass("progress-bar-success");
@@ -294,7 +294,7 @@ function preveriKisik() {
 		else if (globalSp02 < 80) {
 			$(".progress-bar").addClass("progress-bar-warning");
 			$("#kisikSporocilo").html("<span class='obvestilo label label-warning fade-in'>Nivo kisika v vaši krvi je prenizek!</span>");
-			$("#kisikRazlaga").text("Željen odstotek kisika v krvi na tej nadmorski višini je 80-85%. Priporočljivo je, da si kisik izmerite še na kakem drugem delu telesa. Mogoč razlog je akutna bolezen (prehlad, pljučnica). Če se meritve dalj časa ne spremenijo, kontaktirajte zdravnika.");
+			$("#kisikRazlaga").text("Željen odstotek kisika v krvi na tej nadmorski višini je 80-85%. Priporočljivo je, da si kisik izmerite še na kakem drugem delu telesa. Mogoč razlog je akutna bolezen (prehlad, pljučnica). Če se meritve dalj časa ne spremenijo, kontaktirajte zdravnika. Poizkusite tudi to: One technique for raising your blood oxygen level at altitude is something called 'pressure breathing'. The idea is to artificially raise the pressure of the air in your lungs by pursing your lips to slow the air escaping while exhaling HARD for about 1 minute. It's very counter-intuitive, but it works great.");
 		}
 		else if (globalSp02 <= 85) {
 			$(".progress-bar").addClass("progress-bar-success");
