@@ -5,7 +5,19 @@ var queryUrl = baseUrl + '/query';
 var username = "ois.seminar";
 var password = "ois4fri";
 
-var ehrIDD;
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+//globalni ehrID (ehrIDD)
+//ehrId iz url-ja
+var globalEhrID = getParameterByName("ehrId");
+var globalSp02;
+var globalCurrElevation;
+
 
 //AJAX applications are browser- and platform-independent!
 
@@ -49,11 +61,12 @@ function kreirajEHRzaBolnika() {
 		    url: baseUrl + "/ehr",
 		    //Specifies the type of request. (GET or POST)
 		    type: 'POST',
+		    async: false,
 		    //A function to be run when the request succeeds
 		    //data - contains the resulting data from the request
 		    success: function (data) {
 		        //var ehrId = data.ehrId;
-		        ehrIDD = data.ehrId;
+		        globalEhrID = data.ehrId;
 		        //GET /demographics/ehr/{ehrId}/party: retrieves patient’s demographic data
 		        // build party data
 		        var partyData = {
@@ -61,7 +74,7 @@ function kreirajEHRzaBolnika() {
 		            lastNames: priimek,
 		            dateOfBirth: datumRojstva,
 		            //partyAdditionalInfo: [{key: "ehrId", value: ehrId}]
-		            partyAdditionalInfo: [{key: "ehrId", value: ehrIDD}]
+		            partyAdditionalInfo: [{key: "ehrId", value: globalEhrID}]
 		        };
 		        //POST /demographics/party: creates a new party in the demographics server and stores an ehrId
 		        $.ajax({
@@ -77,15 +90,15 @@ function kreirajEHRzaBolnika() {
 		                    //$("#kreirajSporocilo").html("<span class='obvestilo label label-success fade-in'>Uspešno kreiran EHR '" + ehrId + "'.</span>");
 		                    //console.log("Uspešno kreiran EHR '" + ehrId + "'.");
 		                    //$("#preberiEHRid").val(ehrId);
-		                    $("#kreirajSporocilo").html("<span class='obvestilo label label-success fade-in'>Uspešno kreiran EHR '" + ehrIDD + "'.</span>");
-		                    console.log("Uspešno kreiran EHR '" + ehrIDD + "'.");
-		                    $("#preberiEHRid").val(ehrIDD);
-		                    $("#dodajVitalnoEHR").val(ehrIDD);
-		                    $("#meritveVitalnihZnakovEHRid").val(ehrIDD);
+		                    $("#kreirajSporocilo").html("<span class='obvestilo label label-success fade-in'>Uspešno kreiran EHR '" + globalEhrID + "'.</span>");
+		                    console.log("Uspešno kreiran EHR '" + globalEhrID + "'.");
+		                    $("#preberiEHRid").val(globalEhrID);
+		                    $("#dodajVitalnoEHR").val(globalEhrID);
+		                    $("#meritveVitalnihZnakovEHRid").val(globalEhrID);
 		                    
 		                    //ustvarim novega uporabnika v listi uporabnikov
-		                    //<option value="254f791d-2e7c-49d9-b646-376f62d6ead5">Dejan Lavbič</option>
-		                    var noviVnos = '<option value="' + ehrIDD +'">' + ime + ' ' + priimek +'</option>';
+		                    //<option value="254f791d-2e7c-49d9-b646-376f62d6ead5">Babica Mili</option>
+		                    var noviVnos = '<option value="' + globalEhrID +'">' + ime + ' ' + priimek +'</option>';
 		                    $(noviVnos).appendTo("#preberiObstojeciEHR");
 		                }
 		            },
@@ -104,7 +117,7 @@ function preberiEHRodBolnika() {
 	sessionId = getSessionId();
 
 	var ehrId = $("#preberiEHRid").val();
-	ehrIDD = ehrId;
+	globalEhrID = ehrId;
 
 	if (!ehrId || ehrId.trim().length == 0) {
 		$("#preberiSporocilo").html("<span class='obvestilo label label-warning fade-in'>Prosim vnesite zahtevan podatek!");
@@ -120,21 +133,47 @@ function preberiEHRodBolnika() {
 				console.log("Bolnik '" + party.firstNames + " " + party.lastNames + "', ki se je rodil '" + party.dateOfBirth + "'.");
 			},
 			error: function(err) {
-				$("#preberiSporocilo").html("<span class='obvestilo label label-danger fade-in'>Napaka '" + JSON.parse(err.responseText).userMessage + "'!");
+				$("#preberiSporocilo").html("<span class='obvestilo label label-danger fade-in'>Tm,  '" + JSON.parse(err.responseText).userMessage + "'!");
 				console.log(JSON.parse(err.responseText).userMessage);
 			}
 		});
 	}	
 }
 
+//vneses ehr, najde podatke o bolniku
+function preberiPodatkeOBolnikuIzEhr() {
+	sessionId = getSessionId();
+
+	var ehrId = $("#dodajVitalnoEHR").val();
+	globalEhrID = ehrId;
+
+		$.ajax({
+			//url: baseUrl + "/demographics/ehr/" + ehrId + "/party",
+			url: baseUrl + "/demographics/ehr/" + globalEhrID + "/party",
+			type: 'GET',
+			headers: {"Ehr-Session": sessionId},
+	    	success: function (data) {
+				var party = data.party;
+				$("#prijavljenUporabnik").text(party.firstNames + " " + party.lastNames);
+				console.log("Bolnik '" + party.firstNames + " " + party.lastNames + "', ki se je rodil '" + party.dateOfBirth + "'.");
+			},
+			error: function(err) {
+				console.log(JSON.parse(err.responseText).userMessage);
+			}
+		});
+}
+
 function dodajMeritveVitalnihZnakov() {
 	sessionId = getSessionId();
 
 	//var ehrId = $("#dodajVitalnoEHR").val();
-	var ehrId = ehrIDD;
+	$("#dodajVitalnoEHR").val(globalEhrID);
+	var ehrId = globalEhrID;
 	var datumInUra = $("#dodajVitalnoDatumInUra").val();
 	var telesnaTemperatura = $("#dodajVitalnoTelesnaTemperatura").val();
 	var nasicenostKrviSKisikom = $("#dodajVitalnoNasicenostKrviSKisikom").val();
+	globalSp02 = nasicenostKrviSKisikom;
+	globalCurrElevation = $("input[name=elevation]:checked", "#elevationForm").val();
 
 	if (!ehrId || ehrId.trim().length == 0) {
 		$("#dodajMeritveVitalnihZnakovSporocilo").html("<span class='obvestilo label label-warning fade-in'>Prosim vnesite zahtevane podatke!</span>");
@@ -173,10 +212,106 @@ function dodajMeritveVitalnihZnakov() {
 	}
 }
 
+function preveriKisik() {
+	sessionId = getSessionId();
+	
+	//legenda: meje: red | yellow | green | blue
+	//za yellow sem vzela 3%, saj ce pade 3% -> acute disease may be suspected (common cold or pneumonia)
+	//modro pomeni, da je previsoko (gledam visinski trening)
+	if (globalCurrElevation == "under1500") {
+		//meje: <94 | [94,96) | [96,100]
+		if (globalSp02 < 94) {
+			$(".progress-bar").addClass("progress-bar-danger");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-danger fade-in'>Nivo kisika v vaši krvi je nevarno prenizek!</span>");
+			$("#kisikRazlaga").text("Normalen odstotek kisika v krvi na tej nadmorski višini je 96-100%.");
+		}
+		else if (globalSp02 < 96) {
+			$(".progress-bar").addClass("progress-bar-warning");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-warning fade-in'>Nivo kisika v vaši krvi je prenizek!</span>");
+			$("#kisikRazlaga").text("Normalen odstotek kisika v krvi na tej nadmorski višini je 96-100%. Priporočljivo je, da si kisik izmerite še na kakem drugem delu telesa. Mogoč razlog je akutna bolezen (prehlad, pljučnica). Če se meritve dalj časa ne spremenijo, kontaktirajte zdravnika.");
+		}
+		else {
+			$(".progress-bar").addClass("progress-bar-success");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-success fade-in'>Nivo kisika v vaši krvi se nahaja v normalnih mejah.</span>");
+			$("#kisikRazlaga").text("");
+		}
+	}
+	else if (globalSp02 == "over1500") {
+		//meje: <87 | [87, 90) | [90,95] | (95, 100]
+		if (globalSp02 < 87) {
+			$(".progress-bar").addClass("progress-bar-danger");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-danger fade-in'>Nivo kisika v vaši krvi je nevarno prenizek!</span>");
+			$("#kisikRazlaga").text("Željen odstotek kisika v krvi na tej nadmorski višini je 90-95%.");
+		}
+		else if (globalSp02 < 90) {
+			$(".progress-bar").addClass("progress-bar-warning");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-warning fade-in'>Nivo kisika v vaši krvi je prenizek!</span>");
+			$("#kisikRazlaga").text("Željen odstotek kisika v krvi na tej nadmorski višini je 90-95%. Priporočljivo je, da si kisik izmerite še na kakem drugem delu telesa. Mogoč razlog je akutna bolezen (prehlad, pljučnica). Če se meritve dalj časa ne spremenijo, kontaktirajte zdravnika.");
+		}
+		else if (globalSp02 <= 95) {
+			$(".progress-bar").addClass("progress-bar-success");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-success fade-in'>Nivo kisika v vaši krvi se nahaja v normalnih mejah.</span>");
+			$("#kisikRazlaga").text("Lahko nadaljujete z IHT višinskim treningom.");
+		}
+		else {
+			$(".progress-bar").addClass("progress-bar-info");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-info fade-in'>Nivo kisika v vaši krvi je previsok.</span>");
+			$("#kisikRazlaga").text("Ostanite na isti nadmorski višini. Da lahko nadaljujete z IHT višinskim treningom in se pomaknete na višjo nadmorsko višino, mora biti raven kisika v vaši krvi 90-95%");
+		}
+	}
+	else if (globalCurrElevation == "over3000") {
+		//meje: <82 | [82, 85) | [85,90] | (90, 100]
+		if (globalSp02 < 82) {
+			$(".progress-bar").addClass("progress-bar-danger");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-danger fade-in'>Nivo kisika v vaši krvi je nevarno prenizek!</span>");
+			$("#kisikRazlaga").text("Željen odstotek kisika v krvi na tej nadmorski višini je 85-90%.");
+		}
+		else if (globalSp02 < 85) {
+			$(".progress-bar").addClass("progress-bar-warning");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-warning fade-in'>Nivo kisika v vaši krvi je prenizek!</span>");
+			$("#kisikRazlaga").text("Željen odstotek kisika v krvi na tej nadmorski višini je 85-90%. Priporočljivo je, da si kisik izmerite še na kakem drugem delu telesa. Mogoč razlog je akutna bolezen (prehlad, pljučnica). Če se meritve dalj časa ne spremenijo, kontaktirajte zdravnika.");
+		}
+		else if (globalSp02 <= 90) {
+			$(".progress-bar").addClass("progress-bar-success");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-success fade-in'>Nivo kisika v vaši krvi se nahaja v normalnih mejah.</span>");
+			$("#kisikRazlaga").text("Lahko nadaljujete z IHT višinskim treningom.");
+		}
+		else {
+			$(".progress-bar").addClass("progress-bar-info");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-info fade-in'>Nivo kisika v vaši krvi je previsok.</span>");
+			$("#kisikRazlaga").text("Ostanite na isti nadmorski višini. Da lahko nadaljujete z IHT višinskim treningom in se pomaknete na višjo nadmorsko višino, mora biti raven kisika v vaši krvi 85-90%");
+		}
+	}
+	else { //cez 6000
+		//meje: <77 | [77, 80) | [80,85] | (85, 100]
+		if (globalSp02 < 77) {
+			$(".progress-bar").addClass("progress-bar-danger");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-danger fade-in'>Nivo kisika v vaši krvi je nevarno prenizek!</span>");
+			$("#kisikRazlaga").text("Željen odstotek kisika v krvi na tej nadmorski višini je 80-85%.");
+		}
+		else if (globalSp02 < 80) {
+			$(".progress-bar").addClass("progress-bar-warning");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-warning fade-in'>Nivo kisika v vaši krvi je prenizek!</span>");
+			$("#kisikRazlaga").text("Željen odstotek kisika v krvi na tej nadmorski višini je 80-85%. Priporočljivo je, da si kisik izmerite še na kakem drugem delu telesa. Mogoč razlog je akutna bolezen (prehlad, pljučnica). Če se meritve dalj časa ne spremenijo, kontaktirajte zdravnika.");
+		}
+		else if (globalSp02 <= 85) {
+			$(".progress-bar").addClass("progress-bar-success");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-success fade-in'>Nivo kisika v vaši krvi se nahaja v normalnih mejah.</span>");
+			$("#kisikRazlaga").text("Lahko nadaljujete z IHT višinskim treningom.");
+		}
+		else {
+			$(".progress-bar").addClass("progress-bar-info");
+			$("#kisikSporocilo").html("<span class='obvestilo label label-info fade-in'>Nivo kisika v vaši krvi je previsok.</span>");
+			$("#kisikRazlaga").text("Ostanite na isti nadmorski višini. Da lahko nadaljujete z IHT višinskim treningom in se pomaknete na višjo nadmorsko višino, mora biti raven kisika v vaši krvi 80-85%");
+		}
+	}
+}
+
 function preberiMeritveVitalnihZnakov() {
 	sessionId = getSessionId();
 
-	var ehrId = $("#meritveVitalnihZnakovEHRid").val();
+	//var ehrId = $("#meritveVitalnihZnakovEHRid").val();
+	var ehrId = globalEhrID;
 	var tip = $("#preberiTipZaVitalneZnake").val();
 
 	if (!ehrId || ehrId.trim().length == 0 || !tip || tip.trim().length == 0) {
@@ -213,18 +348,15 @@ function preberiMeritveVitalnihZnakov() {
 					});
 					
 				} else if (tip == "spO2") {
-$("#preberiEHRid").val("Sem v spO2.");
 					$.ajax({
-						url: baseUrl + "/view/" + ehrId + "/" + "/spO2",
+						url: baseUrl + "/view/" + ehrId + "/spO2",
 						type: 'GET',
 						headers: {"Ehr-Session": sessionId},
 						success: function (res) {
-$("#preberiEHRid").val("Nekaj.");
 							if (res.length > 0) {
 								var results = "<table class='table table-striped table-hover'><tr><th>Datum in ura</th><th class='text-right'>Nasičenost krvi</th></tr>";
 								for (var i in res) {
-									//results += "<tr><td>" + res[i].time + "</td><td class='text-right'>" + res[i].spO2 + "% " + "</td>";
-									//results += "<tr><td>" + res[i].time + "</td><td class='text-right'>" + res[i].spO2.toFixed(2) + "% " + "</td>";
+									results += "<tr><td>" + res[i].time + "</td><td class='text-right'>" + res[i].spO2 + "% " + "</td>";
 									//results += "<tr><td>" + res[i].time + "</td><td class='text-right'>" + "% " + "</td>";
 								}
 								results += "</table>";
@@ -234,7 +366,6 @@ $("#preberiEHRid").val("Nekaj.");
 							}
 						},
 						error: function() {
-$("#preberiEHRid").val("Prislo je do napake.");
 							$("#preberiMeritveVitalnihZnakovSporocilo").html("<span class='obvestilo label label-danger fade-in'>Napaka '" + JSON.parse(err.responseText).userMessage + "'!");
 							console.log(JSON.parse(err.responseText).userMessage);
 						}
@@ -309,6 +440,20 @@ $("#preberiEHRid").val("Prislo je do napake.");
 //te stvari so narejeno fiksno, iz dropdown menija
 //ko izberem nekaj v meniju, se nastimajo vrednosti polj.
 $(document).ready(function() {
+	
+	//nastavim nov URL, ko se izbere uporabnisko ime.
+	//ne dela ubistvu,dela znotraj preberiObstojeciEhr
+	$('#preberiEHRid').change(function() {
+	    $("#prijavniGumb").attr("href", "meritve.html?ehrId=" + globalEhrID);
+	})
+		
+	//nastavim nov URL, ko kreiram novega bolnika
+	$('#prijavniGumbNewUser').click(function() {
+		kreirajEHRzaBolnika();
+		window.location = "./meritve.html?ehrId=" + globalEhrID;
+		//$("#prijavniGumbNewUser").attr("href", "meritve.html?ehrId=" + globalEhrID);
+	})
+	
 	$('#preberiPredlogoBolnika').change(function() {
 		$("#kreirajSporocilo").html("");
 		//naredim ?tabelo, kjer locim po vejicah
@@ -319,7 +464,10 @@ $(document).ready(function() {
 	});
 	$('#preberiObstojeciEHR').change(function() {
 		$("#preberiSporocilo").html("");
+		//nastavim novi URL, ko se izbere uporabnisko ime.
 		$("#preberiEHRid").val($(this).val());
+		globalEhrID = $(this).val();
+		$("#prijavniGumb").attr("href", "meritve.html?ehrId=" + globalEhrID);
 		$("#dodajVitalnoEHR").val($(this).val());
 		$("#meritveVitalnihZnakovEHRid").val($(this).val());
 	});
@@ -336,4 +484,28 @@ $(document).ready(function() {
 		$("#rezultatMeritveVitalnihZnakov").html("");
 		$("#meritveVitalnihZnakovEHRid").val($(this).val());
 	});
+	
+	//preverim usklajenost visine in kisika
+	$('#dodajMeritve').click(function() {
+		dodajMeritveVitalnihZnakov();
+		//izberem barvo prikaza
+		preveriKisik();
+		//dinamicno se spremeni dolzina progress-a
+		$(".progress-bar").css('width', globalSp02 + '%' );
+	})
+	//nastavi razred nazaj na osnovnega
+	$('#dodajVitalnoNasicenostKrviSKisikom').change(function() {
+	    $(".progress-bar").attr('class', 'progress-bar');
+	})
+	$("input[name=elevation]:radio").change(function() {
+	    $(".progress-bar").attr('class', 'progress-bar');
+	})
+	
+	//po pritisku gumba prijavi, kjer naredim novega uporabnika
+	//nastavim globalEhrID v Vnos meritev, da obdrzim prijavljenega uporabnika
+	if (globalEhrID !== undefined) {
+	 	$("#dodajVitalnoEHR").val(globalEhrID);
+	 	$("#meritveVitalnihZnakovEHRid").val(globalEhrID);
+	 	preberiPodatkeOBolnikuIzEhr();
+	}
 });

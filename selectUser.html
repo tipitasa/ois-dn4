@@ -22,12 +22,19 @@
 					<div class="panel-heading">
 						<div class="row">
 							<div class="col-lg-8 col-md-8 col-sm-8"><b>Izberi svoje uporabniško ime: </b></div>
-							<div class="col-lg-4 col-md-4 col-sm-4"><select class="form-control input-sm" id="preberiObstojeciEHR"><option value=""></option><option value="254f791d-2e7c-49d9-b646-376f62d6ead5">Dejan Lavbič</option><option value="d564c6a3-5a43-4fcc-bfa7-9ac76e9673bd">Pujsa Pepa</option><option value="b931580f-2b05-488b-985b-8d9ffb08ad02">Ata Smrk</option></select></div>
+							<div class="col-lg-4 col-md-4 col-sm-4">
+								<select class="form-control input-sm" id="preberiObstojeciEHR">
+									<option value=""></option>
+									<option value="254f791d-2e7c-49d9-b646-376f62d6ead5">Babica Mili</option>
+									<option value="d564c6a3-5a43-4fcc-bfa7-9ac76e9673bd">Pujsa Pepa</option>
+									<option value="b931580f-2b05-488b-985b-8d9ffb08ad02">Ata Smrk</option>
+									<option value="dc9a05a1-b324-4b7f-9e59-b91d31b38876">Taja Novak</option>
+								</select></div>
 						</div>
 					</div>
 					<div class="panel-body">
 						<span class="label label-default">EHR ID</span><input id="preberiEHRid" type="text" class="form-control input-mini" placeholder="7b661e12-3a98-21ad-c29e-2dc9f5a3d885">
-						<button type="button" class="btn btn-primary btn-xs" onclick="preberiEHRodBolnika(); location.href='meritve.html'">Prijava</button><span id="preberiSporocilo"></span>
+						<a class="btn btn-primary btn-xs" id="prijavniGumb" href="meritve.html">Prijava</a><span id="preberiSporocilo"></span>
 				  	</div>
 				</div>
 			</div>
@@ -37,14 +44,28 @@
 			<div class="col-lg-6 col-md-6 col-sm-6">
 				<div class="panel panel-default">
 					<div class="panel-heading">
+						
+					<!-- vKONCNI verziji bo samo ta koda (nic seznama)
                         <p><b>Kreiraj EHR zapis za novega uporabnika</b></p>
                         <p><small>*aplikacijo uporabljam prvič</small></p>
+                    -->    
+                        
+                        <div class="row">
+							<div class="col-lg-8 col-md-8 col-sm-8"><b>Kreiraj EHR zapis za novega bolnika</b></div>
+							<div class="col-lg-4 col-md-4 col-sm-4">
+								<select class="form-control input-sm" id="preberiPredlogoBolnika">
+									<option value=""></option>
+									<option value="Nova,Baja,2011-10-30T14:58">Nova Baja</option>
+								</select>
+							</div>
+						</div>
+                        
 					</div>
 					<div class="panel-body">
 						<span class="label label-default">Ime</span><input id="kreirajIme" type="text" class="form-control input-mini" placeholder="Maja">
 						<span class="label label-default">Priimek</span><input id="kreirajPriimek" type="text" class="form-control" placeholder="Baja">
 						<span class="label label-default">Datum rojstva v formatu LLLL-MM-DD</span><input id="kreirajDatumRojstva" type="text" class="form-control" placeholder="1957-03-10T09:08">
-						<button type="button" class="btn btn-primary btn-xs" onclick="kreirajEHRzaBolnika()">Prijava</button><span id="kreirajSporocilo"></span>
+						<button class="btn btn-primary btn-xs" id="prijavniGumbNewUser">Prijava novega uporabnika</button><span id="preberiSporocilo"></span><span id="kreirajSporocilo"></span>
 				  	</div>
 				</div>
 			</div>
